@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BaberAgenda</string>
+    <string name="baber_shop">Baber Shop</string>
+    <string name="welcome_text">Bem-Vindo(a), Fulano</string>
+    <string name="all_services">Todos os Serviços</string>
+    <string name="to_schedule">AGENDAR</string>
+</resources>
