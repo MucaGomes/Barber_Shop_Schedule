@@ -1,17 +1,26 @@
 package com.app.baberagenda
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.app.baberagenda.databinding.ActivityMainBinding
 import com.app.baberagenda.view.Home
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var auth: FirebaseAuth
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,9 +29,14 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
+        auth = Firebase.auth
+        val db = Firebase.firestore
+
         binding.btLogin.setOnClickListener {
             val name = binding.edtName.text.toString()
             val password = binding.edtPassword.text.toString()
+            val email = binding.edtEmail.text.toString()
+
 
             when {
                 name.isEmpty() -> {
@@ -33,8 +47,40 @@ class MainActivity : AppCompatActivity() {
                 }
                 password.length <= 5 -> {
                     mensagem(it, "Insira uma senha de no minimo 5 caracteres!")
-                }else -> {
-                    navigateHome(name)
+                }
+                else -> {
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(this) { task ->
+                            if (task.isSuccessful) {
+                                Log.d(TAG, "createUserWithPassword:sucess")
+
+                                val userId = FirebaseAuth.getInstance().currentUser!!.uid
+
+                                val user = hashMapOf(
+                                    "name" to name
+                                )
+
+                                db.collection("users").document(userId).set(user)
+                                    .addOnCompleteListener { documentReference ->
+                                        Log.d(
+                                            TAG,
+                                            "Document added with ID: ${documentReference.result}"
+                                        )
+                                    }
+                                    .addOnFailureListener { e ->
+                                    Log.w(TAG, "Error adding document", e)
+                                }
+
+
+                                navigateHome(name)
+                            } else {
+                                Log.w(TAG, "createUserWithPassword:failure", task.exception)
+                                Toast.makeText(
+                                    baseContext, "Authentication failed",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                 }
             }
         }
@@ -48,9 +94,20 @@ class MainActivity : AppCompatActivity() {
         snackbar.show()
     }
 
-    private fun navigateHome(name:String) {
+    private fun navigateHome(name: String) {
         val intent = Intent(this, Home::class.java)
-        intent.putExtra("nome",name)
+        intent.putExtra("nome", name)
         startActivity(intent)
     }
+
+    public override fun onStart() {
+        super.onStart()
+        //check user signed
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            onRestart()
+        }
+    }
+
 }
