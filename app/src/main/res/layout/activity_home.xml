@@ -11,25 +11,24 @@
         android:id="@+id/txtWelcome"                
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="50dp"
         android:gravity="center"
         android:text="@string/welcome_text"
         android:textColor="@color/white"
-        android:textSize="18sp"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <SearchView
-        android:id="@+id/searchView"
+    <Space
+        android:id="@+id/space1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:background="@color/white"
-        android:queryHint="Pesquisar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtWelcome" />
+        app:layout_constraintTop_toBottomOf="@id/txtWelcome"
+        android:layout_marginTop="50dp"/>
+
 
     <TextView
         android:id="@+id/txtTitleServices"
@@ -43,7 +42,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchView" />
+        app:layout_constraintTop_toBottomOf="@+id/space1" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvlServices"

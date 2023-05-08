@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.app.baberagenda.databinding.ActivityMainBinding
+import com.app.baberagenda.databinding.ActivityLoginBinding
 import com.app.baberagenda.view.Home
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -16,15 +16,15 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class MainActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         supportActionBar?.hide()
@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
             val name = binding.edtName.text.toString()
             val password = binding.edtPassword.text.toString()
             val email = binding.edtEmail.text.toString()
-
 
             when {
                 name.isEmpty() -> {
@@ -68,11 +67,11 @@ class MainActivity : AppCompatActivity() {
                                         )
                                     }
                                     .addOnFailureListener { e ->
-                                    Log.w(TAG, "Error adding document", e)
-                                }
+                                        Log.w(TAG, "Error adding document", e)
+                                    }
 
 
-                                navigateHome(name)
+                                navigateHome()
                             } else {
                                 Log.w(TAG, "createUserWithPassword:failure", task.exception)
                                 Toast.makeText(
@@ -94,9 +93,8 @@ class MainActivity : AppCompatActivity() {
         snackbar.show()
     }
 
-    private fun navigateHome(name: String) {
+    private fun navigateHome() {
         val intent = Intent(this, Home::class.java)
-        intent.putExtra("nome", name)
         startActivity(intent)
     }
 
@@ -104,10 +102,8 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         //check user signed
         val currentUser = auth.currentUser
-
         if (currentUser != null) {
-            onRestart()
+            navigateHome()
         }
     }
-
 }

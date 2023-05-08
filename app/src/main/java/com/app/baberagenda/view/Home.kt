@@ -3,7 +3,6 @@ package com.app.baberagenda.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import com.app.baberagenda.R
 import com.app.baberagenda.adapter.ServicesAdapter
@@ -44,16 +43,16 @@ class Home : AppCompatActivity() {
     }
 
     private fun getServices() {
-        val service1 = Services(R.drawable.img1, "Corte de Cabelo")
+        val service1 = Services(R.drawable.hair_cut, "Corte de Cabelo")
         listaServices.add(service1)
 
-        val service2 = Services(R.drawable.img2, "Corte de Barba")
+        val service2 = Services(R.drawable.beard_cut, "Corte de Barba")
         listaServices.add(service2)
 
-        val service3 = Services(R.drawable.img3, "Lavagem de Cabelo")
+        val service3 = Services(R.drawable.hair_wash, "Lavagem de Cabelo")
         listaServices.add(service3)
 
-        val service4 = Services(R.drawable.img4, "Tratamento de cabelo (Luzes)")
+        val service4 = Services(R.drawable.products, "Tratamento de cabelo (Luzes)")
         listaServices.add(service4)
 
     }
@@ -64,7 +63,7 @@ class Home : AppCompatActivity() {
         val documentRef = db.collection("users").document(userId)
         documentRef.addSnapshotListener(MetadataChanges.INCLUDE) { document , e ->
             if (document != null ){
-                binding.txtWelcome.text = "Bem Vindo(a), ${document.getString("name")}"
+                binding.txtWelcome.text = "Bem Vindo(a), ${document.getString("name")?.capitalize()}"
             }
         }
     }

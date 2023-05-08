@@ -13,22 +13,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/midnightblue"
-    tools:context=".MainActivity"
+    tools:context=".LoginActivity"
     android:gravity="center">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/baber_shop"
-        android:textSize="36sp"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:gravity="center"/>
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:src="@drawable/logobarber1"/>
+        android:layout_height="290dp"
+        android:src="@drawable/barber_shop_icon"/>
 
     <EditText
         android:id="@+id/edtName"

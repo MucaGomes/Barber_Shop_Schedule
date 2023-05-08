@@ -1,27 +1,31 @@
 package com.app.baberagenda.view
 
+import android.R
 import android.content.ContentValues
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.app.baberagenda.databinding.ActivityScheduleBinding
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.MetadataChanges
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import java.text.SimpleDateFormat
+import com.google.firebase.firestore.QuerySnapshot
 import java.util.*
+
 
 class Schedule : AppCompatActivity() {
 
     private lateinit var binding: ActivityScheduleBinding
     private val calendar: Calendar = Calendar.getInstance()
-    private val db = Firebase.firestore
+    private val db = FirebaseFirestore.getInstance()
     private val userId = FirebaseAuth.getInstance().currentUser!!.uid
     private var data = ""
     private var hora = ""
@@ -37,7 +41,7 @@ class Schedule : AppCompatActivity() {
 
         val documentRef = db.collection("users").document(userId)
         documentRef.addSnapshotListener(MetadataChanges.INCLUDE) { document, e ->
-            if (document != null ){
+            if (document != null) {
                 name = document.getString("name").toString()
             }
         }
@@ -105,11 +109,14 @@ class Schedule : AppCompatActivity() {
                 barber1.isChecked && data.isNotEmpty() && hora.isNotEmpty() -> {
 
                     val date = "$data às $hora"
+                    val service = binding.spnServices.selectedItem.toString()
+
 
                     val schedule = hashMapOf(
                         "date" to date,
                         "name-barber" to txtBarber1.toString(),
-                        "user-name" to name
+                        "user-name" to name,
+                        "service" to service
                     )
 
                     db.collection("schedule").document(userId).set(schedule)
@@ -134,6 +141,28 @@ class Schedule : AppCompatActivity() {
                 }
             }
         }
+        val servicesRef = db.collection("services")
+        val spinner = binding.spnServices
+
+        val services: MutableList<String> = ArrayList()
+
+        val adapter = ArrayAdapter(applicationContext, R.layout.simple_spinner_item, services)
+        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+
+        servicesRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                for (document in task.result) {
+                    val service = document.getString("name")
+                    if (service != null) {
+                        services.add(service)
+                    }
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
+
+
     }
 
     private fun message(view: View, message: String, color: String) {
